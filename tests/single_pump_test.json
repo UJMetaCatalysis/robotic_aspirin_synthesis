@@ -1,0 +1,21 @@
+{
+  "io": {
+      "port": "COM8",
+      "baudrate": 9600,
+      "timeout": 1
+  },
+  "default": {
+    "volume": 5,
+    "micro_step_mode": 2,
+    "top_velocity": 24000,
+    "initialize_valve_position": "1"
+  },
+  "groups": {
+    "chemicals": ["acetone"]
+  },
+  "pumps": {
+      "pump1": {
+        "switch": "0"
+      }
+  }
+}
