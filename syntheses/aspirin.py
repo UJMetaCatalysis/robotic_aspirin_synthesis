@@ -19,7 +19,8 @@ last_increment = 0
 
 while True:
     print("Enter S to begin aspirin synthesis",
-          "Enter F to flush port 1",
+          "Press P to prime the tubing",
+          "Enter F to flush port 1 with acetic anhydride",
           "Enter Q to quit")
     response = input()
     response.capitalize()
@@ -66,6 +67,17 @@ while True:
                 time.sleep(0.1)
                 time_elapsed = time.time() - start_time
         print("Synthesis complete")
+    elif response == "P":
+        response = input("The tubing only needs to be primed once. Continue (Y/N)?")
+        if response.capitalize() == "Y":
+            print("Priming port 2 with ethanol")
+            controller.pumps["pump1"].transfer(1.5, from_valve='2', to_valve="6")
+            print("Priming port 3 conc. sulphuric acid")
+            controller.pumps["pump1"].transfer(1.5, from_valve='3', to_valve="6")
+            print("Priming port 4 with Acetic anhydride")
+            controller.pumps["pump1"].transfer(1.5, from_valve='4', to_valve="6")
+            print("Priming port 5 with water")
+            controller.pumps["pump1"].transfer(1.5, from_valve='5', to_valve="6")
     elif response == "F":
         response = input("Route reactor tube (port 1) into waste container, press F to continue")
         if response == "F":
