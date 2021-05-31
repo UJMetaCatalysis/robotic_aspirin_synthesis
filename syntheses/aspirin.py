@@ -5,6 +5,7 @@ import logging
 
 import pycont.controller
 
+
 def validate_input(input_query, int_val=False):
     answer = input(input_query)
     try:
@@ -22,7 +23,7 @@ def validate_input(input_query, int_val=False):
         validate_input(input_query)
 
 
-default_parameters = [5, 900, 10]
+default_parameters = [5.0, 900, 10.0]
 cool_time = 900
 parameters = []
 
@@ -36,21 +37,22 @@ controller.smart_initialize()
 last_increment = 0
 
 while True:
-    print("Enter R to change reaction parameters", "Enter S to begin aspirin synthesis",
-          "Press P to prime the tubing",
-          "Enter F to flush port 1 with acetic anhydride",
-          "Enter Q to quit")
+    print(" Enter R to change reaction parameters\n", "Enter S to begin aspirin synthesis\n",
+          "Press P to prime the tubing\n",
+          "Enter F to flush port 1 with acetic anhydride\n",
+          "Enter Q to quit\n")
     response = input()
-    response.capitalize()
+    response = response.capitalize()
     if response == "S":
         if not parameters:
             parameters = default_parameters
         acetic = parameters[0]
         heat_time = parameters[1]
         water = parameters[2]
+        acetic_first = acetic - 0.5
 
         print(f"Transferring 4ml of acetic anhyrdride to reactor")
-        controller.pumps["pump1"].transfer(acetic - 0.5, from_valve='4', to_valve='1')
+        controller.pumps["pump1"].transfer(acetic_first, from_valve='4', to_valve='1')
 
         print("Transferring 0.1ml of sulphuric acid to reactor")
         controller.pumps["pump1"].transfer(0.1, from_valve='3', to_valve='1')
@@ -93,11 +95,11 @@ while True:
         print("Synthesis complete")
     elif response == "R":
         parameters = []
-        acetic_ml = validate_input("How many mL of acetic anhydride?")
+        acetic_ml = validate_input("How many mL of acetic anhydride?\n")
         parameters.append(acetic_ml)
-        heat_time = validate_input("How many minutes should the reaction heat for?", int_val=True)
+        heat_time = validate_input("How many minutes should the reaction heat for?\n", int_val=True)
         parameters.append(heat_time*60)
-        water_ml = validate_input("How many mL of water?")
+        water_ml = validate_input("How many mL of water?\n")
         parameters.append(water_ml)
     elif response == "P":
         response = input("The tubing only needs to be primed once. Continue (Y/N)?")
