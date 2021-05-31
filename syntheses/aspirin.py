@@ -5,6 +5,27 @@ import logging
 
 import pycont.controller
 
+def validate_input(input_query, int_val=False):
+    answer = input(input_query)
+    try:
+        if int_val:
+            answer = int(answer)
+        else:
+            answer = float(answer)
+    except ValueError:
+        print("Please enter a number")
+        validate_input(input_query, int_val)
+    if answer > 0:
+        return answer
+    else:
+        print("Please enter a number greater than 0")
+        validate_input(input_query)
+
+
+default_parameters = [5, 900, 10]
+cool_time = 900
+parameters = []
+
 logging.basicConfig(level=logging.INFO)
 
 SETUP_CONFIG_FILE = "./aspirin.json"
@@ -12,28 +33,31 @@ SETUP_CONFIG_FILE = "./aspirin.json"
 controller = pycont.controller.MultiPumpController.from_configfile(SETUP_CONFIG_FILE)
 
 controller.smart_initialize()
-heat_time = 900  # Heat for 15 min
-cool_time = 600  # cool for 10 min
-precip_time = 900
 last_increment = 0
 
 while True:
-    print("Enter S to begin aspirin synthesis",
+    print("Enter R to change reaction parameters", "Enter S to begin aspirin synthesis",
           "Press P to prime the tubing",
           "Enter F to flush port 1 with acetic anhydride",
           "Enter Q to quit")
     response = input()
     response.capitalize()
     if response == "S":
-        print("Transferring 4ml of acetic anhyrdride to reactor")
-        controller.pumps["pump1"].transfer(4.0, from_valve='4', to_valve='1')
+        if not parameters:
+            parameters = default_parameters
+        acetic = parameters[0]
+        heat_time = parameters[1]
+        water = parameters[2]
+
+        print(f"Transferring 4ml of acetic anhyrdride to reactor")
+        controller.pumps["pump1"].transfer(acetic - 0.5, from_valve='4', to_valve='1')
 
         print("Transferring 0.1ml of sulphuric acid to reactor")
         controller.pumps["pump1"].transfer(0.1, from_valve='3', to_valve='1')
 
         print("Transferring 1ml of acetic anhydride to reactor")
-        controller.pumps["pump1"].transfer(0.6, from_valve='4', to_valve='1')
-        # Flush out dead volume (~0.4ml) with water
+        controller.pumps["pump1"].transfer(0.5, from_valve='4', to_valve='1')
+        # Flush out dead volume of acetic acid (~0.4ml) with water
         controller.pumps["pump1"].transfer(0.3, from_valve='5', to_valve='1')
 
         print("Heating for 15 minutes")
@@ -51,7 +75,7 @@ while True:
         controller.pumps["pump1"].transfer(0.5, from_valve='5', to_valve='1')
 
         print("Transferring 10ml of water to reactor")
-        controller.pumps['pump1'].transfer(9.5, from_valve='5', to_valve='1')
+        controller.pumps['pump1'].transfer(water - 0.5, from_valve='5', to_valve='1')
 
         print("Place reactor in an ice bath")
 
@@ -67,6 +91,14 @@ while True:
                 time.sleep(0.1)
                 time_elapsed = time.time() - start_time
         print("Synthesis complete")
+    elif response == "R":
+        parameters = []
+        acetic_ml = validate_input("How many mL of acetic anhydride?")
+        parameters.append(acetic_ml)
+        heat_time = validate_input("How many minutes should the reaction heat for?", int_val=True)
+        parameters.append(heat_time*60)
+        water_ml = validate_input("How many mL of water?")
+        parameters.append(water_ml)
     elif response == "P":
         response = input("The tubing only needs to be primed once. Continue (Y/N)?")
         if response.capitalize() == "Y":
