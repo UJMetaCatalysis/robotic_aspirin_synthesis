@@ -8,7 +8,7 @@ import pycont.controller
 WATER = '1'
 ACETIC_ANHYDRIDE = '2'
 SULPHURIC_ACID = '3'
-WASTE = '5'
+WASTE = '4'
 REACTOR = '6'
 
 
