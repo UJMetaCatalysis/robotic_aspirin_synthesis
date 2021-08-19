@@ -46,10 +46,19 @@ while True:
     print(" Enter R to change reaction parameters\n", "Enter S to begin aspirin synthesis\n",
           "Press P to prime the tubing\n",
           "Enter F to flush port 1 with acetic anhydride\n",
+          "Enter Z to zero the pump\n",
           "Enter Q to quit\n")
     response = input()
     response = response.capitalize()
     if response == "S":
+        print("Before beginning, please check the connections, port 1 is the left-most port on the valve:\n", "Port 1: Water\n", "Port 2: Acetic anhydride\n", "Port 3: Conc. sulphuric acid\n", "Port 4: Waste bottle\n", "Port 6: Reactor\n")
+        print("Please make sure the reagent bottles are filled and the tubing can reach the reagents. Make sure that 5g of salicyclic acid is present in the reactor. \n")
+        print("Turn on the stirrer hotplate. Set temperature to 70°C and stirring to 500 rpm")
+        cont = input("Continue? (Y/N")
+        if cont.upper() == "Y":
+            pass
+        elif cont.upper() == "N":
+            continue
         if not parameters:
             parameters = default_parameters
         acetic = parameters[0]
@@ -121,7 +130,9 @@ while True:
         response = input("Press F to continue")
         if response == "F":
             controller.pumps["pump1"].transfer(2.0, from_valve=ACETIC_ANHYDRIDE, to_valve=REACTOR)
+    elif response == "Z":
+        print("Zeroing the pump")
+        controller.pumps['pump1'].go_to_volume(0)
     elif response == "Q":
         print("End of program")
         break
-
