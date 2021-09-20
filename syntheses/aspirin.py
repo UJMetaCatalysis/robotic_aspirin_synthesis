@@ -82,7 +82,7 @@ while True:
         time_elapsed = time.time() - start_time
         with Bar('   Heating', fill='#', suffix="%(percent).1f%%") as bar:
             while time_elapsed < heat_time + 2:
-                if time_elapsed - (last_increment * 9) > 9:
+                if time_elapsed - (last_increment * (heat_time/100)) > (heat_time/100):
                     bar.next()
                     last_increment += 1
                 time.sleep(0.1)
@@ -102,7 +102,7 @@ while True:
         time_elapsed = time.time() - start_time
         with Bar("   Cooling", fill="#", suffix="%(percent).1f%%") as bar:
             while time_elapsed < cool_time + 2:
-                if time_elapsed - (last_increment * 6) > 6:
+                if time_elapsed - (last_increment * (cool_time/100)) > (cool_time/100):
                     bar.next()
                     last_increment += 1
                 time.sleep(0.1)
