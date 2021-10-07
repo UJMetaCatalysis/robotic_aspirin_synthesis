@@ -1751,7 +1751,6 @@ class MultiPumpController(object):
             self.apply_command_to_pumps(list(pumps_and_volumes_dict.keys()), "wait_until_idle")
         return True
 
-
 class VirtualMultiPumpController(MultiPumpController):
     def __init__(self, setup_config):
         self.logger = create_logger(self.__class__.__name__)
@@ -1779,3 +1778,25 @@ class VirtualMultiPumpController(MultiPumpController):
 
     def smart_initialize(self, secure=True):
         pass
+
+
+def transfer_between(source_pump: C3000Controller, source_source_valve: str, source_target_valve: str, target_pump: C3000Controller, target_source_valve: str, target_target_valve: str, volume_in_ml: float, secure: bool = True):
+    volume_transferred = float('inf')
+    pumplist = [source_pump, target_pump]
+    for pump in pumplist:
+        candidate_volume = min(volume_in_ml, pump.remaining_volume)
+        volume_transferred = min(candidate_volume, volume_transferred)
+
+    # Get required fluid from source
+    source_pump.pump(volume_transferred, from_valve=source_source_valve, wait=True, secure=secure)
+    # Deliver fluid from source pump to target pump
+    source_pump.deliver(volume_transferred, to_valve=source_target_valve, wait=False, secure=secure)
+    target_pump.pump(volume_transferred, from_valve=target_source_valve, wait=True, secure=secure)
+    # Deliver fluid to target 
+    target_pump.deliver(volume_transferred, target_target_valve, wait=True, secure=secure)
+    source_pump.wait_until_idle()
+    target_pump.wait_until_idle()
+
+    remaining_volume_to_transfer = volume_in_ml - volume_transferred
+    if remaining_volume_to_transfer > 0:
+        transfer_between(source_pump, source_source_valve, source_target_valve, target_pump, target_source_valve, target_target_valve, remaining_volume_to_transfer, secure)

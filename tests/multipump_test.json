@@ -1,0 +1,30 @@
+{"pump1": {
+    "io": {
+        "port": "COM12",
+        "baudrate": 9600,
+        "timeout": 1
+    },
+    "default": {
+      "volume": 5,
+      "micro_step_mode": 2,
+      "top_velocity": 2400,
+      "initialize_valve_position": "1",
+      "switch": "0"
+    }
+  },
+  "pump2":{
+        "io": {
+            "port": "COM10",
+            "baudrate": 9600,
+            "timeout": 1
+        },
+        "default": {
+        "volume": 5,
+        "micro_step_mode": 2,
+        "top_velocity": 2400,
+        "initialize_valve_position": "1",
+        "switch": "0"
+        }, 
+        "switch": "0"
+  }
+}
